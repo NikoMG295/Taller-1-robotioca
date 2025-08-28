@@ -1,0 +1,439 @@
+import numpy as np
+import math
+import matplotlib.pyplot as plt
+from scipy import signal
+import random
+from mpl_toolkits.mplot3d import Axes3D
+#......................................................PARTE A................................................................................#
+#...........PUNTO 1...........#
+
+
+v_a= np.array([5,71,48])
+print(v_a)
+v_b=np.array([90,8,97])
+print(v_b)
+
+# SUMA  #
+v_r_s= v_a + v_b
+print('Suma: ',v_r_s)
+
+# RESTA  #
+v_r_r= v_a - v_b
+print('Resta: ',v_r_r)
+
+# PRODUCTO PUNTO   #
+v_r_pp=np.dot(v_a, v_b)
+print('Producto punto: ',v_r_pp)
+
+# PRODUCTO CRUZ #
+v_r_pc=np.cross(v_a, v_b)
+print('Producto cruz: ',v_r_pc)
+
+# DIVISION #
+v_r_d= v_a/v_b
+print('Division: ',v_r_d)
+
+
+#..............PUNTO 2.............#
+
+m_a=np.array([[45,73,58],[88,95,64],[45,21,66]])
+m_b=np.array([[23,12,33],[99,36,10],[28,77,85]])
+
+# SUMA #
+m_s=m_a + m_b
+print('Suma: ',m_s)
+
+# RESTA #
+m_r=m_a - m_b
+print('Resta: ',m_r)
+
+# PRODUCTO PUNTO #
+m_pp=np.dot(m_a,m_b)
+print('Producto punto: ',m_pp)
+
+# PRODUCTO CRUZ #
+m_pc=np.cross(m_a,m_b)
+print('Producto cruz: ',m_pc)
+
+# DIVISION #
+inv_m_b=np.linalg.inv(m_b)
+m_d=np.dot(m_a,inv_m_b)
+print('Division: ',m_d)
+
+
+#............PUNTO 3..............#
+c_x=4
+c_y=7
+c_z=3
+
+print('cilindricas: ')
+
+r_c=math.hypot(c_x,c_y)
+print('r: ',r_c)
+
+theta_1_1=math.atan(c_y/c_x)
+theta_1_2=math.degrees(theta_1_1)
+print('Theta: ',theta_1_2)
+
+z=c_z
+print('z: ',z)
+
+
+print('Esfercicas: ')
+r_e=math.hypot(c_x,c_y,c_z)
+print('r: ',r_e)
+
+theta_2_1=math.atan(c_y/c_x)
+theta_2_2=math.degrees(theta_2_1)
+print('Theta: ',theta_2_2)
+
+phi_2_1=math.acos(c_z/r_e)
+phi_2_2=math.degrees(phi_2_1)
+print('Phi: ',phi_2_2)
+
+
+#...........PUNTO 4........#
+def res_pt100(temp_c):
+    r_0 = 100 
+    a = 3.9083e-3
+    b = -5.775e-7
+    if temp_c >= 0:
+        return r_0 * (1 + a * temp_c + b * temp_c ** 2)
+    else:
+        c = -4.183e-12
+        return r_0 * (1 + a * temp_c + b * temp_c ** 2 + c * (temp_c - 100) * temp_c ** 3)
+
+temp = 50
+print(f"Resistencia a {temp}°C = {res_pt100(temp):.2f} ohms")
+
+
+#.........PUNTO 5.........#
+a_in=45
+sen_a=math.sin(a_in*math.pi/180)
+cos_a=math.cos(a_in*math.pi/180)
+
+m_x=np.array([[1,0,0],
+             [0,cos_a,-sen_a],
+             [0,sen_a,cos_a]])
+m_y=np.array([[cos_a,0,sen_a],
+             [0,1,0],
+             [-sen_a,0,cos_a]])
+m_z=np.array([[cos_a, -sen_a, 0],
+             [sen_a, cos_a, 0],
+             [0, 0, 1]])
+
+print('Matriz en x: ',m_x)
+print('Matriz en y: ',m_y)
+print('Matriz en z: ',m_z)
+
+#.......PUNTO 6..........f
+# Parámetros iniciales
+P_bar = 6           # Presión en bar
+D_mm = 50           # Diámetro del cilindro en mm
+d_mm = 20           # Diámetro del vástago en mm
+
+# Conversión de unidades
+P = P_bar * 1e5     # bar → Pa
+D = D_mm / 1000     # mm → m
+d = d_mm / 1000     # mm → m
+
+# Áreas
+A = (np.pi * D**2) / 4       # Área pistón
+A_vastago = (np.pi * d**2) / 4
+
+# Fuerzas
+F_avance = P * A
+F_retroceso = P * (A - A_vastago)
+
+# Resultados
+print("=== CILINDRO DE DOBLE EFECTO ===")
+print(f"Presión: {P_bar} bar ({P:.0f} Pa)")
+print(f"Diámetro del cilindro: {D_mm} mm")
+print(f"Diámetro del vástago: {d_mm} mm\n")
+
+print(f"Fuerza de avance: {F_avance:.2f} N")
+print(f"Fuerza de retroceso: {F_retroceso:.2f} N")
+
+
+
+#............................................................PARTE B....................................................................................#
+
+#..........PUNTO 1......#
+corr=float(input('ingrese el valor de la corriente (en Amp): '))
+volt=float(input('ingrese el valor del voltaje (en Volt): '))
+potencia=corr*volt
+print(f'la potencia es de: {potencia} Watts')
+
+#..........PUNTO 2........#
+n_cn=float(input('ingrese la cantidad de valores a generar: '))
+n_in=float(input('ingrese el valor de inicio de rango: '))
+n_fn=float(input('ingrese el valor final de rango: '))
+
+nm=[random.uniform(n_in,n_fn) for _ in range(n_cn)]
+
+print('Numeros generados: ')
+for n in nm:
+    print(n)
+
+
+
+#.......PUNTO 3.......#
+
+def volumen_prisma(ancho, largo, altura):
+    return ancho * largo * altura
+
+def volumen_piramide(ancho, largo, altura):
+    return (1/3) * ancho * largo * altura
+
+def volumen_cono_truncado(r1, r2, altura):
+    return (1/3) * math.pi * altura * (r1**2 + r2**2 + r1*r2)
+
+def volumen_cilindro(radio, altura):
+    return math.pi * radio**2 * altura
+
+def main():
+    print("Seleccione el sólido para calcular el volumen:")
+    print("1 - Prisma")
+    print("2 - Pirámide")
+    print("3 - Cono truncado")
+    print("4 - Cilindro")
+
+    opcion = input("Ingrese el número de la opción: ")
+
+    if opcion == "1":
+        ancho = float(input("Ingrese el ancho de la base del prisma (en mts): "))
+        largo = float(input("Ingrese el largo de la base del prisma (en mts): "))
+        altura = float(input("Ingrese la altura del prisma (en mts): "))
+        volumen = volumen_prisma(ancho, largo, altura)
+    elif opcion == "2":
+        ancho = float(input("Ingrese el ancho de la base de la piramide (en mts): "))
+        largo = float(input("Ingrese el largo de la base de la piramide (en mts): "))
+        altura = float(input("Ingrese la altura de la piramide (en mts): "))
+        volumen = volumen_piramide(ancho, largo, altura)
+    elif opcion == "3":
+        r1 = float(input("Ingrese el radio mayor del cono truncado (en mts): "))
+        r2 = float(input("Ingrese el radio menor del cono truncado (en mts): "))
+        altura = float(input("Ingrese la altura del cono truncado (en mts): "))
+        volumen = volumen_cono_truncado(r1, r2, altura)
+    elif opcion == "4":
+        radio = float(input("Ingrese el radio del cilindro (en mts): "))
+        altura = float(input("Ingrese la altura del cilindro (en mts): "))
+        volumen = volumen_cilindro(radio, altura)
+    else:
+        print("Opción no válida.")
+        return
+
+    print(f"El volumen calculado es: {volumen} metro cubicos")
+
+if __name__ == "__main__":
+    main()
+
+
+#.........PUNTO 4......#
+def menu_robots():
+    print("Seleccione el tipo de robot:")
+    print("1. Robot Cartesiano")
+    print("2. Robot Cilíndrico")
+    print("3. Robot Esférico")
+
+    opcion = input("Ingrese el número de la opción: ")
+
+    if opcion == "1":
+        print("\nRobot Cartesiano:")
+        print("Tipo: Robot de traslación lineal")
+        print("Número de articulaciones: 3 (todas prismáticas)")
+    elif opcion == "2":
+        print("\nRobot Cilíndrico:")
+        print("Tipo: Robot de rotación + traslación lineal")
+        print("Número de articulaciones: 3 (1 rotacional, 2 prismáticas)")
+    elif opcion == "3":
+
+#........PUNTO 5.......#
+
+while True:
+    respuesta = input("¿Desea continuar Si/No? ")
+    if respuesta == "no":
+        print("Programa terminado.")
+        break
+    elif respuesta == "si":
+        print("Continuando...")
+    else:
+        print("Por favor, responda 'Si' o 'No'.")
+
+
+
+
+
+
+#...........................................................................PARTE C...........................................................................#
+
+#......PUNTO 1........#
+def resistencia_pt100(temperatura):
+    R0 = 100
+    A = 3.9083e-3
+    B = -5.775e-7
+    C = -4.183e-12
+    t = temperatura
+    resistencia = np.where(
+        t >= 0,
+        R0 * (1 + A*t + B*t**2),
+        R0 * (1 + A*t + B*t**2 + C*(t - 100)*t**3)
+    )
+    return resistencia
+
+temperaturas = np.linspace(-200, 200, 401)
+resistencias = resistencia_pt100(temperaturas)
+
+plt.figure(figsize=(8,5))
+plt.plot(temperaturas, resistencias, label="PT100 (R0=100Ω)")
+plt.xlabel("Temperatura (°C)")
+plt.ylabel("Resistencia (Ω)")
+plt.title("Comportamiento de un sensor PT100 vs Temperatura")
+plt.grid(True)
+plt.legend()
+plt.show()
+
+
+#......PUNTO 2......#
+# Ingresar coeficientes
+print("Ecuación característica: a*s^2 + b*s + c")
+a = float(input("Ingrese a: "))
+b = float(input("Ingrese b: "))
+c = float(input("Ingrese c: "))
+
+# Normalizar dividiendo entre a
+wn = np.sqrt(c/a)            # Frecuencia natural
+zeta = b / (2 * np.sqrt(a*c)) # Factor de amortiguamiento
+
+# Clasificación del sistema
+if zeta < 1:
+    tipo = "Subamortiguado"
+elif np.isclose(zeta, 1, atol=1e-3):
+    tipo = "Críticamente amortiguado"
+else:
+    tipo = "Sobreamortiguado"
+
+print(f"\nFrecuencia natural (wn): {wn:.2f} rad/s")
+print(f"Coeficiente de amortiguamiento (ζ): {zeta:.2f}")
+print(f"El sistema es: {tipo}")
+
+# Función de transferencia
+num = [c]        # numerador
+den = [a, b, c]  # denominador
+sistema = signal.TransferFunction(num, den)
+
+# Respuesta al escalón
+t, y = signal.step(sistema)
+
+# Graficar
+plt.figure(figsize=(8,5))
+plt.plot(t, y, label=f"Sistema {tipo}")
+plt.xlabel("Tiempo (s)")
+plt.ylabel("Respuesta")
+plt.title("Respuesta al escalón de un sistema de 2º orden")
+plt.grid(True)
+plt.legend()
+plt.show()
+
+
+#......PUNTO 3......#
+# Ingresar datos
+V = float(input("Ingrese el voltaje de la fuente (V): "))
+C_micro = float(input("Ingrese la capacitancia (μF): "))
+R = float(input("Ingrese la resistencia (Ω): "))
+
+# Convertir microfaradios a faradios
+C = C_micro * 1e-6
+
+# Constante de tiempo
+tau = R * C
+print(f"\nConstante de tiempo (τ = RC): {tau:.4f} s")
+
+# Vector de tiempo (0 a 5τ para ver la evolución completa)
+t = np.linspace(0, 5*tau, 500)
+
+# Ecuaciones
+Vc_carga = V * (1 - np.exp(-t/tau))   # Carga
+Vc_descarga = V * np.exp(-t/tau)      # Descarga
+
+# Graficar
+plt.figure(figsize=(8,5))
+plt.plot(t, Vc_carga, label="Carga del condensador")
+plt.plot(t, Vc_descarga, label="Descarga del condensador", linestyle="--")
+plt.axhline(V, color='gray', linestyle=':', label="Voltaje final")
+plt.xlabel("Tiempo (s)")
+plt.ylabel("Voltaje en el condensador (V)")
+plt.title("Carga y descarga de un circuito RC")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+#...........PUNTO 4...........#
+# Ingresar coordenadas del vector
+x = float(input("Ingrese la coordenada X del vector: "))
+y = float(input("Ingrese la coordenada Y del vector: "))
+z = float(input("Ingrese la coordenada Z del vector: "))
+
+# Crear figura 3D
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Dibujar los ejes
+ax.quiver(0, 0, 0, x, y, z, color='r', arrow_length_ratio=0.1, linewidth=2)
+
+# Configuración de los ejes
+ax.set_xlim([0, max(1, x+1)])
+ax.set_ylim([0, max(1, y+1)])
+ax.set_zlim([0, max(1, z+1)])
+
+ax.set_xlabel('Eje X')
+ax.set_ylabel('Eje Y')
+ax.set_zlabel('Eje Z')
+ax.set_title('Vector en sistema de coordenadas 3D')
+
+plt.show()
+
+
+
+#...........PUNTO 5...........#
+import matplotlib.pyplot as plt
+
+def dibujar_letra(x_offset, y_offset, letra):
+    """Dibuja una letra en base a coordenadas definidas manualmente"""
+    letras = {
+        "J": ([0, 1, 1, 0.5, 0], [2, 2, 0.5, 0, 0.5]),
+        "U": ([0, 0, 1, 1], [2, 0.5, 0.5, 2]),
+        "A": ([0, 0.5, 1], [0, 2, 0]),
+        "N": ([0, 0, 1, 1], [0, 2, 0, 2]),
+        "O": ([0, 0, 1, 1, 0], [0, 2, 2, 0, 0]),
+        "I": ([0.5, 0.5], [0, 2]),
+        "C": ([1, 0, 0, 1], [2, 2, 0, 0]),
+        "L": ([0, 0, 1], [2, 0, 0]),
+        "S": ([1, 0, 0, 1, 1, 0], [2, 2, 1, 1, 0, 0])
+    }
+
+    if letra not in letras:
+        return
+
+    x, y = letras[letra]
+    x = [xi + x_offset for xi in x]
+    y = [yi + y_offset for yi in y]
+    plt.plot(x, y, color="black", linewidth=2)
+
+
+# --- DIBUJAR "JUANJO" ---
+x_start = 0
+for letra in "JUANJO":
+    dibujar_letra(x_start, 0, letra)
+    x_start += 2  # espacio entre letras
+
+# --- DIBUJAR "NICOLAS" ---
+x_start = 0
+for letra in "NICOLAS":
+    dibujar_letra(x_start, -3, letra)  # más abajo (y_offset=-3)
+    x_start += 2
+
+plt.axis("equal")
+plt.axis("off")
+plt.title("Nombres en coordenadas: Juanjo y Nicolas")
+plt.show()
